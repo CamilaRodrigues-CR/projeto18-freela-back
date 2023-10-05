@@ -1,5 +1,4 @@
-import { db } from "../database/connectionDatabase.js"
-
+import { getToken } from "../repository/users.js"
 
 export async function authValidate(req, res, next) {
     const { authorization } = req.headers
@@ -9,7 +8,7 @@ export async function authValidate(req, res, next) {
 
     try {
         //  buscar na tabela sessions o token que veio na req.
-        //const session = await db.query(`SELECT token FROM sessions WHERE token = $1;`, [token])
+        const session = await getToken(token)
 
         //  se não houver token, ou não for igual
         if (session.rowCount === 0) {
