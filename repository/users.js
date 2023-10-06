@@ -7,6 +7,12 @@ export function getToken(token) {
     return resultToken;
 }
 
+export function searchUser (session){
+    const resultCompare = db.query(`SELECT "userId" FROM sessions WHERE token = $1;`, [session.rows[0].token])
+    
+    return resultCompare;
+}
+
 
 // ------------------------------------------------------- rotas signIn ----------------------------------------------------------------------------------
 export function findEmail(email) {
@@ -35,5 +41,5 @@ export function findUser(email) {
 export function insertToken(user, token) {
     const insertedToken = db.query(`INSERT INTO sessions (token, "userId") VALUES ($1, $2);`, [token, user.rows[0].id])
 
-    return insertToken
+    return insertedToken
 }
