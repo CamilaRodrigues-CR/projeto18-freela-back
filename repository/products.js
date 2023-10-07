@@ -11,6 +11,31 @@ export function findProductbyId(id) {
     return productResult
 }
 
+// --------------- rota getmyproducts ----------------------
+export function findMyProducts(userId) {
+    
+    const productResult = db.query(`
+    SELECT products.*, categorie_product.*, categories.type
+    FROM products
+    JOIN categorie_product ON products.id = categorie_product."productsId"
+    JOIN categories ON categories.id = categorie_product."categorieId"
+    WHERE products."userId" = $1;`, [userId.rows[0].userId])
+
+    return productResult
+}
+
+// --------------- rota getAllproducts ----------------------
+export function findAllProducts(userId) {
+    
+    const productResult = db.query(`
+    SELECT products.*, categorie_product.*, categories.type
+    FROM products
+    JOIN categorie_product ON products.id = categorie_product."productsId"
+    JOIN categories ON categories.id = categorie_product."categorieId"
+    WHERE status=true;`)
+
+    return productResult
+}
 
 // -------------------- rota post product -------------------
 
@@ -49,6 +74,8 @@ export function findProduct(findNewProductId) {
 
     return productResult
 }
+
+
 
 export function addPhoto(photo, findNewProductId) {
     const insertPhoto = db.query(`INSERT INTO photos (photo, "productsId") VALUES ($1, $2);`, 
