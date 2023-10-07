@@ -1,4 +1,5 @@
 import { db } from "../database/connectionDatabase.js";
+
 // ---------------- rota get productsById --------------------
 export function findProductbyId(id) {
     const productResult = db.query(`

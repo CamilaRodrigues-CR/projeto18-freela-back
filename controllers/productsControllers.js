@@ -137,9 +137,7 @@ export async function postProduct(req, res) {
         //inserir a photo na tabela photos   
         const newphoto = await db.query(`INSERT INTO photos (photo, "productsId") VALUES ($1, $2);`, 
     [photo, findNewProductId.rows[0].id]);
-        //buscando os dados para mandar na resposta
-        //const product = await findProduct(findNewProductId.rows[0].id)
-         //console.log(product)
+       
          */
 export async function deleteProductById(req, res) {
     const { id } = req.params                 //
