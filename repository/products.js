@@ -3,10 +3,11 @@ import { db } from "../database/connectionDatabase.js";
 // ---------------- rota get productsById --------------------
 export function findProductbyId(id) {
     const productResult = db.query(`
-    SELECT products.*, categorie_product.*, categories.type
-    FROM products
+    SELECT products.*, categorie_product.* , categories.type, photos.photo
+	FROM products
     JOIN categorie_product ON products.id = categorie_product."productsId"
     JOIN categories ON categories.id = categorie_product."categorieId"
+	JOIN photos ON products.id = photos."productId"
     WHERE products.id = $1;`, [id])
 
     return productResult
@@ -16,12 +17,20 @@ export function findProductbyId(id) {
 export function findMyProducts(userId) {
     
     const productResult = db.query(`
+    SELECT products.*, categorie_product.* , categories.type, photos.photo
+	FROM products
+    JOIN categorie_product ON products.id = categorie_product."productsId"
+    JOIN categories ON categories.id = categorie_product."categorieId"
+	JOIN photos ON products.id = photos."productId"
+    WHERE products."userId" = $1;`, [userId.rows[0].userId])
+
+    /*
     SELECT products.*, categorie_product.*, categories.type
     FROM products
     JOIN categorie_product ON products.id = categorie_product."productsId"
     JOIN categories ON categories.id = categorie_product."categorieId"
-    WHERE products."userId" = $1;`, [userId.rows[0].userId])
-
+    WHERE products."userId" = $1;
+    */
     return productResult
 }
 
@@ -29,10 +38,11 @@ export function findMyProducts(userId) {
 export function findAllProducts(userId) {
     
     const productResult = db.query(`
-    SELECT products.*, categorie_product.*, categories.type
-    FROM products
+    SELECT products.*, categorie_product.* , categories.type, photos.photo
+	FROM products
     JOIN categorie_product ON products.id = categorie_product."productsId"
     JOIN categories ON categories.id = categorie_product."categorieId"
+	JOIN photos ON products.id = photos."productId"
     WHERE status=true;`)
 
     return productResult
@@ -67,10 +77,11 @@ export function addCategorie(findNewProductId, findCategorie) {
 
 export function findProduct(findNewProductId) {
     const productResult = db.query(`
-    SELECT products.*, categorie_product.*, categories.type
-    FROM products
+    SELECT products.*, categorie_product.* , categories.type, photos.photo
+	FROM products
     JOIN categorie_product ON products.id = categorie_product."productsId"
     JOIN categories ON categories.id = categorie_product."categorieId"
+	JOIN photos ON products.id = photos."productId"
     WHERE products.id = $1;`, [findNewProductId.rows[0].id])
 
     return productResult
@@ -79,8 +90,9 @@ export function findProduct(findNewProductId) {
 
 
 export function addPhoto(photo, findNewProductId) {
-    const insertPhoto = db.query(`INSERT INTO photos (photo, "productsId") VALUES ($1, $2);`, 
+    const insertPhoto = db.query(`INSERT INTO photos (photo, "productId") VALUES ($1, $2);`, 
     [photo, findNewProductId.rows[0].id]);
+
     console.log("photo" , insertPhoto)
     return insertPhoto;   
 }

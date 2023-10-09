@@ -1,7 +1,7 @@
 import { db } from "../database/connectionDatabase.js";
 import { deleteCategorie, deleteProduct, searchProducts } from "../repository/deletes.js";
 import { updateProduct } from "../repository/patch.js";
-import { addCategorie, findAllProducts, findMyProducts, findProduct, findProductId, findProductbyId, product, searchCategorie } from "../repository/products.js";
+import { addCategorie, addPhoto, findAllProducts, findMyProducts, findProduct, findProductId, findProductbyId, product, searchCategorie } from "../repository/products.js";
 import { searchUser } from "../repository/users.js";
 
 export async function getAllproducts(req, res) {
@@ -15,7 +15,8 @@ export async function getAllproducts(req, res) {
                 name: u.name,
                 description: u.description,
                 price: u.price,
-                type: u.type
+                type: u.type,
+                photo: u.photo
             }
             delete product.userId;
             delete product.categorieId;
@@ -33,7 +34,6 @@ export async function getProductById(req, res) {
 
     try {
         const product = await findProductbyId(id)
-        console.log(product)
         //fazer um map para ajustar o formato do retorno
         const result = product.rows.map(u => {
             const obj = {
@@ -41,7 +41,8 @@ export async function getProductById(req, res) {
                 name: u.name,
                 description: u.description,
                 price: u.price,
-                type: u.type
+                type: u.type,
+                photo: u.photo
             }
             delete obj.userId;
             delete obj.categorieId;
@@ -52,7 +53,7 @@ export async function getProductById(req, res) {
         if (product.rowCount === 0) {
             return res.sendStatus(404)
         }
-
+        console.log(result)
         res.status(200).send(result)
     } catch (err) {
         res.status(500).send(err.message)
@@ -78,7 +79,8 @@ export async function getMyProducts(req, res) {
                 name: u.name,
                 description: u.description,
                 price: u.price,
-                type: u.type
+                type: u.type,
+                photo: u.photo
             }
             delete product.userId;
             delete product.categorieId;
@@ -97,8 +99,9 @@ export async function getMyProducts(req, res) {
 }
 
 export async function postProduct(req, res) {
-    const { name, description, price, type } = req.body
+    const { name, description, price, type, photo } = req.body
     const session = res.locals.session
+    console.log("photo", photo)
 
     try {
         //buscar o id do usuario para inserir na tabela 
@@ -109,7 +112,7 @@ export async function postProduct(req, res) {
 
         //pegar todos os dados do produto salvo
         const findNewProductId = await findProductId(name);
-        console.log(findNewProductId.rows[0])
+        console.log("findnewP", findNewProductId.rows[0])
 
 
         //salvar a categoria do produto
@@ -117,15 +120,17 @@ export async function postProduct(req, res) {
         const findCategorie = await searchCategorie(type);
         console.log(findCategorie)
 
-
         await addCategorie(findNewProductId, findCategorie)
 
-        //adicionar uma foto e deixar uma opção de adc novas fotos em outra req??
+        //adicionar a foto 
+        const newphoto = await db.query(`INSERT INTO photos (photo, "productId") VALUES ($1, $2);`, 
+        [photo, findNewProductId.rows[0].id]);
+        console.log("newphoto", newphoto)
 
 
         //buscar os dados para retornar ao front
         const resultPost = await findProduct(findNewProductId)
-        console.log(resultPost)
+    
         res.status(201).send(resultPost.rows[0])
 
     } catch (err) {
@@ -133,12 +138,7 @@ export async function postProduct(req, res) {
     }
 }
 
-/*
-        //inserir a photo na tabela photos   
-        const newphoto = await db.query(`INSERT INTO photos (photo, "productsId") VALUES ($1, $2);`, 
-    [photo, findNewProductId.rows[0].id]);
-       
-         */
+
 export async function deleteProductById(req, res) {
     const { id } = req.params                 //
     const session = res.locals.session
