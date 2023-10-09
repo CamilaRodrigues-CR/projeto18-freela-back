@@ -1,5 +1,5 @@
 import { db } from "../database/connectionDatabase.js";
-import { deleteCategorie, deleteProduct, searchProducts } from "../repository/deletes.js";
+import { deleteCategorie, deleteProduct, searchProducts } from "../repository/deletes.js"; 
 import { updateProduct } from "../repository/patch.js";
 import { addCategorie, addPhoto, findAllProducts, findMyProducts, findProduct, findProductId, findProductbyId, product, searchCategorie } from "../repository/products.js";
 import { searchUser } from "../repository/users.js";
