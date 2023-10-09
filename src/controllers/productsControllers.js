@@ -1,5 +1,5 @@
 import { db } from "../database/connectionDatabase.js";
-import { deleteCategorie, deleteProduct, searchProducts } from "../repository/deletes.js"; 
+import { deleteCategorie, deletePhoto, deleteProduct, searchProducts } from "../repository/deletes.js"; 
 import { updateProduct } from "../repository/patch.js";
 import { addCategorie, addPhoto, findAllProducts, findMyProducts, findProduct, findProductId, findProductbyId, product, searchCategorie } from "../repository/products.js";
 import { searchUser } from "../repository/users.js";
@@ -155,6 +155,8 @@ export async function deleteProductById(req, res) {
         if (productUserId.rows[0].userId === findProduct.rows[0].userId) {
             //apagar o produto da relação produto-categoria
             await deleteCategorie(id)
+
+            await deletePhoto(id)
 
             await deleteProduct(id)   // fazer a query para o delete
 

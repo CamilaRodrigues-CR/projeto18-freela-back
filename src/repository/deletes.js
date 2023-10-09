@@ -13,6 +13,11 @@ export function deleteCategorie(id){
     
     return resultDelete;
 }
+export function deletePhoto(id){
+    const resultDelete = db.query(`DELETE FROM photos WHERE "productsId" = $1;`, [id])
+    
+    return resultDelete;
+}
 
 
 export function deleteProduct (id){
